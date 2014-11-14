@@ -21,6 +21,7 @@ import java.awt.GridLayout;
 import javax.swing.JList;
 import javax.swing.JTable;
 
+import com.deduplication.FileChunk;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
@@ -57,10 +58,11 @@ public class MainWindow {
 	private JPanel panelButton;
 	private JButton btnUpload;
 	private JButton btnDownload;
-	private JButton btnDelete;
 	private JButton btnRemove;
+	private JButton btnMove;
 	private JButton btnNewFolder;
-	private JFileChooser fileChooser;
+	private JFileChooser fileOpenChooser;
+	private JFileChooser fileSaveChooser;
 
 	/**
 	 * Launch the application.
@@ -133,32 +135,66 @@ public class MainWindow {
 		
 		btnUpload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				fileChooser = new JFileChooser();
-				int returnVal = fileChooser.showOpenDialog(frame);
+				fileOpenChooser = new JFileChooser();
+				int returnVal = fileOpenChooser.showOpenDialog(frame);
 				
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-	                File file = fileChooser.getSelectedFile();
+	                File file = fileOpenChooser.getSelectedFile();
+	                byte[] data = FileChunk.readFileInChunk(file);
+	                FileChunk.writeChunkInFile("chunks/" + file.getName(), data);
+	                
 	                //This is where a real application would open the file.
-	                Object[] row = {file.getName(),file.length()/1024 + " K",getCurrentTimeStr()};
+	                Object[] row = {file.getName(),file.length()/1024 + " K",getCurrentTimeStr(),};
 	                ((DefaultTableModel)table.getModel()).addRow(row);
 	            } else {
 	            }
 			}
 		});
 		panelButton.add(btnUpload);
-		//btnUpload.addActionListener();
 		
 		btnDownload = CreateButton(" Download", "images/btn_download.png");
+		btnDownload.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String fileName = (String) table.getValueAt(table.getSelectedRow(),0);
+				//Retrieve chunks based on fileName and prompt to user to save
+				fileSaveChooser = new JFileChooser();
+				fileSaveChooser.setSelectedFile(new File("C:/" + fileName));
+
+				int returnVal = fileSaveChooser.showSaveDialog(frame);
+				
+		        
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					   
+	            } else {
+	            }
+			}
+		});
 		panelButton.add(btnDownload);
 		
 		btnNewFolder = CreateButton(" New Folder", "images/btn_newfolder.png");
 		panelButton.add(btnNewFolder);
 		
-		btnDelete = CreateButton(" Remove", "images/btn_remove.png");
-		panelButton.add(btnDelete);
-		
-		btnRemove = CreateButton(" Move", "images/btn_move.png");
+		btnRemove = CreateButton(" Remove", "images/btn_remove.png");
+		btnRemove.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int selectedRow = table.getSelectedRow();
+				String fileName = (String) table.getValueAt(selectedRow,0);
+				try {
+					FileChunk.deleteFile("chunks/" + fileName);
+					((DefaultTableModel)table.getModel()).removeRow(selectedRow);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		panelButton.add(btnRemove);
+		
+		btnMove = CreateButton(" Move", "images/btn_move.png");
+		panelButton.add(btnMove);
 		
 		JLabel label = new JLabel("");
 		label.setOpaque(true); // Set it true to color the label
