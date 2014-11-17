@@ -1,8 +1,10 @@
 package com.main.MainWindow;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.Toolkit;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -22,6 +24,7 @@ import java.awt.GridLayout;
 import javax.swing.JList;
 import javax.swing.JTable;
 
+import com.HashGeneratorUtils.HashGeneratorUtils;
 import com.deduplication.FileChunk;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -95,8 +98,10 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-		frame.setBounds(100, 100, 545, 352);
+		//frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		frame.setBounds(100, 100, 960, 600);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -143,6 +148,12 @@ public class MainWindow {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fileOpenChooser.getSelectedFile();
+					try {
+						HashGeneratorUtils.genrateMD5(file);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					byte[] data = FileChunk.readFileInChunk(file);
 					FileChunk.writeChunkInFile("chunks/" + file.getName(), data);
 
