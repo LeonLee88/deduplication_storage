@@ -143,7 +143,7 @@ public class MainWindow {
 
 		btnUpload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				fileOpenChooser = new JFileChooser();
+				fileOpenChooser = new JFileChooser("C:/");
 				int returnVal = fileOpenChooser.showOpenDialog(frame);
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
