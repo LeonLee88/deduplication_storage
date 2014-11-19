@@ -48,7 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /*
- * xingyuwu@bu.edu;    Upload Test
+ * xingyuwu@bu.edu;
  * boheng@bu.edu;
  * shu@bu.edu
  * yuyanzhangswe@gmail.com
@@ -143,7 +143,7 @@ public class MainWindow {
 
 		btnUpload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				fileOpenChooser = new JFileChooser();
+				fileOpenChooser = new JFileChooser("C:/");
 				int returnVal = fileOpenChooser.showOpenDialog(frame);
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {

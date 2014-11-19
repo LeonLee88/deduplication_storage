@@ -8,6 +8,8 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.deduplication.ChunkHash;
+
 public class HashGeneratorUtils {
 	public static void genrateMD5(File file) throws Exception {
 		hashFile(file, "MD5");
@@ -17,13 +19,20 @@ public class HashGeneratorUtils {
 		try (FileInputStream inputStream = new FileInputStream(file)) {
 			MessageDigest digest = MessageDigest.getInstance(algorithm);
 
-			byte[] bytesBuffer = new byte[1024];
+			byte[] bytesBuffer = new byte[131072];
 			int bytesRead = -1;
-
+			boolean append = false;
+			
+			File f1=new File("chunklist"); boolean b1 = f1.mkdirs();
+			File f2=new File("chunkedfile"); boolean b2 = f2.mkdirs();
+			
 			while ((bytesRead = inputStream.read(bytesBuffer)) != -1) {
 				digest.update(bytesBuffer);
 				byte[] hashedBytes = digest.digest();
-				//wirteChunk(byte[],convertByteArrayToHexString(hashedBytes))
+				ChunkHash.writeChunk(bytesBuffer,convertByteArrayToHexString(hashedBytes));
+				ChunkHash.generateTxt("chunklist/list",convertByteArrayToHexString(hashedBytes),append);
+				append = true;
+				System.out.println(bytesRead);
 				System.out.println(convertByteArrayToHexString(hashedBytes));
 			}
 
