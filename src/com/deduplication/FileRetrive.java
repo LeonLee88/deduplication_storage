@@ -40,7 +40,7 @@ public class FileRetrive {
 		        doc = dbBuilder.parse("hash.xml");  
 		          
 		        //得到文档名称为Student的元素的节点列表  
-		        NodeList list = doc.getElementsByTagName("chunk");  
+		        NodeList list = doc.getElementsByTagName("file");  
 		          
 			// optional, but recommended
 			// read this -
@@ -50,7 +50,7 @@ public class FileRetrive {
 			System.out.println("Root element :"
 					+ doc.getDocumentElement().getNodeName());
 
-			NodeList nList = doc.getElementsByTagName("chunk"); // ???//
+			NodeList nList = doc.getElementsByTagName("file"); // ???//
 			ArrayList<String> hashlist = new ArrayList<String>();
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 
