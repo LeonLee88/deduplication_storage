@@ -4,6 +4,7 @@ public class Chunk {
 	private String id; //Hash
 	private String num; //Chunk order
 	private int size; //content size
+	private int fileCounter;
 	private byte[] data;
 	
 	public String getId() {
@@ -29,6 +30,12 @@ public class Chunk {
 	}
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	public int getFileCounter() {
+		return fileCounter;
+	}
+	public void setFileCounter(int fileCounter) {
+		this.fileCounter = fileCounter;
 	}
 	
 	
