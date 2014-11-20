@@ -1,8 +1,35 @@
 package com.deduplication;
 
 public class Chunk {
-	String id;
-	String file_id;
-	String num;
-	byte[] data;
+	private String id; //Hash
+	private String num; //Chunk order
+	private int size; //content size
+	private byte[] data;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getNum() {
+		return num;
+	}
+	public void setNum(String num) {
+		this.num = num;
+	}
+	public int getSize() {
+		return size;
+	}
+	public void setSize(int size) {
+		this.size = size;
+	}
+	public byte[] getData() {
+		return data;
+	}
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+	
+	
 }

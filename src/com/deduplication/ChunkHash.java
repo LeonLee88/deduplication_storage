@@ -23,14 +23,12 @@ public class ChunkHash {
 		}
 	}
 	
-	public static void writeChunk(byte[] file,String data) {
+	public static void writeChunk(String chunkHash, byte[] chunkData) {
 		try { 
-			 FileOutputStream fos=new FileOutputStream("chunkedfile/" + data);
-	         //FileOutputStream fos = new FileOutputStream(filePath);
-	         
-	         fos.write(file);
-	         fos.close();
-			 
+			 FileOutputStream fos=new FileOutputStream("chunkedfile/" + chunkHash);
+	         fos.write(chunkData);
+	         fos.flush();
+	         fos.close(); 
 		}
 		catch(FileNotFoundException ex)   {
 	         System.out.println("FileNotFoundException : " + ex);

@@ -32,14 +32,15 @@ public class HashGeneratorUtils {
 			digest.update(fileBuffer);
 			String fileHashID = convertByteArrayToHexString(digest.digest());
 			ArrayList<String> hashlist = new ArrayList<String>();
-			String hashStr;
+			String chunkHash;
 			while ((bytesRead = inputStream.read(chunkBuffer)) != -1) {
 				digest.update(chunkBuffer);
 				byte[] hashedBytes = digest.digest();
-				hashStr = convertByteArrayToHexString(hashedBytes);
-				ChunkHash.writeChunk(chunkBuffer,hashStr);
-				hashlist.add(hashStr);
-				//ChunkHash.generateTxt("chunklist/list",convertByteArrayToHexString(hashedBytes),append);
+				chunkHash = convertByteArrayToHexString(hashedBytes);
+				ChunkHash.writeChunk(chunkHash,chunkBuffer);
+				
+				hashlist.add(chunkHash);
+				ChunkHash.generateTxt("chunklist/list",convertByteArrayToHexString(hashedBytes),append);
 				//append = true;
 				//System.out.println(bytesRead);
 				//System.out.println(convertByteArrayToHexString(hashedBytes));
