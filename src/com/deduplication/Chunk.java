@@ -3,7 +3,7 @@ package com.deduplication;
 public class Chunk {
 	private String id; //Hash
 	private String num; //Chunk order
-	private int size; //content size
+	private Integer size; //content size
 	private int fileCounter;
 	private byte[] data;
 	
@@ -19,7 +19,7 @@ public class Chunk {
 	public void setNum(String num) {
 		this.num = num;
 	}
-	public int getSize() {
+	public Integer getSize() {
 		return size;
 	}
 	public void setSize(int size) {
