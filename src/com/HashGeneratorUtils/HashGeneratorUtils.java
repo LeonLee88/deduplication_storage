@@ -37,7 +37,7 @@ public class HashGeneratorUtils {
 				digest.update(chunkBuffer);
 				byte[] hashedBytes = digest.digest();
 				hashStr = convertByteArrayToHexString(hashedBytes);
-				ChunkHash.writeChunk(chunkBuffer,hashStr);
+				ChunkHash.writeChunk(hashStr,hashedBytes);
 				hashlist.add(hashStr);
 				//ChunkHash.generateTxt("chunklist/list",convertByteArrayToHexString(hashedBytes),append);
 				//append = true;
