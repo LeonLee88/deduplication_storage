@@ -24,7 +24,7 @@ public class HashGeneratorUtils {
 			byte[] fileBuffer = new byte[(int) file.length()];
 			byte[] chunkBuffer = new byte[128*1024];
 			int bytesRead = -1;
-			boolean append = false;
+			boolean append = true;
 			
 			File f1=new File("chunklist"); boolean b1 = f1.mkdirs();
 			File f2=new File("chunkedfile"); boolean b2 = f2.mkdirs();
