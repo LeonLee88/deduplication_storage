@@ -5,12 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -32,6 +35,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class FileChunk {
 	public static byte[] readFileInChunk(File file){
@@ -71,22 +75,24 @@ public class FileChunk {
 	}
 	
 	
-	public static void callWriteXmlFile(Document doc, Writer w, String encoding) {
+	public static void callWriteXmlFile(Document doc, Writer w) {
 		try {
 			Source source = new DOMSource(doc);
 			Result result = new StreamResult(w);
 			Transformer xformer = TransformerFactory.newInstance()
 					.newTransformer();
-			// xformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+			xformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
+			xformer.setOutputProperty(OutputKeys.INDENT,"yes");
 			xformer.transform(source, result);
+			
 		} catch (TransformerConfigurationException e) {
 			e.printStackTrace();
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
 	}
-
-	public static void writeFileHash(String fileId, ArrayList<String> hashlist)
+    //function write to file_mappings.xml
+	public static void writeFileMapping(String filename, ArrayList<Chunk> chunks)
 			throws Exception {
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -99,22 +105,52 @@ public class FileChunk {
 
 		// build fileId tag
 		Element file = doc.createElement("file");
-		file.setAttribute("id", fileId);
+		file.setAttribute("name", filename);
+		file.setAttribute("id", filename);
+		file.setAttribute("time", filename);
+		file.setAttribute("size", filename);
 		doc.appendChild(file);
 
 		// loop for build hash tag
-		for (int temp = 0; temp < hashlist.size(); temp++) {
-			Element hash = doc.createElement("hash");
-			Text hashtext = doc.createTextNode(hashlist.get(temp));
-			hash.appendChild(hashtext);
-			file.appendChild(hash);
+		for (int temp = 0; temp < chunks.size(); temp++) {
+			Element chunk = doc.createElement("chunk");
+			chunk.setAttribute("num", chunks.get(temp).getNum());
+			chunk.setAttribute("size", chunks.get(temp).getSize().toString());
+			Text chunktext = doc.createTextNode(chunks.get(temp).getId());
+			chunk.appendChild(chunktext);
+			file.appendChild(chunk);
 		}
 		// out put
 		try {
-			FileOutputStream fos = new FileOutputStream("hash.xml");
+			FileOutputStream fos = new FileOutputStream("file_mappings.xml",true);
 			OutputStreamWriter outwriter = new OutputStreamWriter(fos);
-
-			callWriteXmlFile(doc, outwriter, "gb2312");
+			callWriteXmlFile(doc, outwriter);
+			outwriter.close();
+			fos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	//function write to hash.xml first load
+	public static void firstloadFileHash(ArrayList<Chunk> chunks){
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		try {
+			builder = dbf.newDocumentBuilder();
+		} catch (Exception e) {
+		}
+		Document doc = builder.newDocument();
+        for(int temp=0;temp<chunks.size();temp++){
+		Element chunk=doc.createElement("chunk");
+        chunk.setAttribute("fileCounter", chunks.get(temp).getFileCounter().toString());
+        Text chunkitext=doc.createTextNode(chunks.get(temp).getId());
+        chunk.appendChild(chunkitext);
+		doc.appendChild(chunk);
+		}
+		try {
+			FileOutputStream fos = new FileOutputStream("hash.xml",true);
+			OutputStreamWriter outwriter = new OutputStreamWriter(fos);
+			callWriteXmlFile(doc, outwriter);
 			outwriter.close();
 			fos.close();
 		} catch (Exception e) {
@@ -122,6 +158,35 @@ public class FileChunk {
 		}
 	}
 	
+//	//function saved hashmap to hash.xml
+	public static void writeFileHash(ArrayList<String> hash,
+			ArrayList<String> counter) {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		try {
+			builder = dbf.newDocumentBuilder();
+		} catch (Exception e) {
+		}
+		Document doc = builder.newDocument();
+		for(int temp=0;temp<hash.size();temp++){
+			Element chunk=doc.createElement("chunk");
+	        chunk.setAttribute("fileCounter", counter.get(temp));
+	        Text chunkitext=doc.createTextNode(hash.get(temp));
+	        chunk.appendChild(chunkitext);
+			doc.appendChild(chunk);
+			}
+			try {
+				FileOutputStream fos = new FileOutputStream("hash.xml");
+				OutputStreamWriter outwriter = new OutputStreamWriter(fos);
+				callWriteXmlFile(doc, outwriter);
+				outwriter.close();
+				fos.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+	}
+		
 	public static ArrayList<String> getFileChunkIDs(String fileID) {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		Document doc = null;
@@ -144,5 +209,7 @@ public class FileChunk {
 
 		return hashlist;
 	}
+
+	
 	
 }
