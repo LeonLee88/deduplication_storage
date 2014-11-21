@@ -25,7 +25,7 @@ public class ChunkHash {
 	
 	public static void writeChunk(String chunkHash, byte[] chunkData) {
 		try { 
-			 FileOutputStream fos=new FileOutputStream("chunkedfile/" + chunkHash);
+			 FileOutputStream fos=new FileOutputStream("chunks/" + chunkHash);
 	         fos.write(chunkData);
 	         fos.flush();
 	         fos.close(); 
