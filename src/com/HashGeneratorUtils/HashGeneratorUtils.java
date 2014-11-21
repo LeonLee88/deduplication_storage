@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -25,9 +26,6 @@ public class HashGeneratorUtils {
 			byte[] chunkBuffer = new byte[128*1024];
 			int bytesRead = -1;
 			boolean append = false;
-			
-			File f1=new File("chunklist"); boolean b1 = f1.mkdirs();
-			File f2=new File("chunkedfile"); boolean b2 = f2.mkdirs();
 
 			digest.update(fileBuffer);
 			String fileHashID = convertByteArrayToHexString(digest.digest());
@@ -40,7 +38,8 @@ public class HashGeneratorUtils {
 				ChunkHash.writeChunk(chunkHash,chunkBuffer);
 				
 				hashlist.add(chunkHash);
-				ChunkHash.generateTxt("chunklist/list",convertByteArrayToHexString(hashedBytes),append);
+				//ChunkHash.generateTxt("chunklist/list",convertByteArrayToHexString(hashedBytes),append);
+				java.util.Arrays.fill(chunkBuffer, 0,chunkBuffer.length-1,(byte)0);
 				//append = true;
 				//System.out.println(bytesRead);
 				//System.out.println(convertByteArrayToHexString(hashedBytes));
