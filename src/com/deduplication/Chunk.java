@@ -1,5 +1,9 @@
 package com.deduplication;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class Chunk {
 	private String id; // Hash
 	private int num; // Chunk order
@@ -59,4 +63,18 @@ public class Chunk {
 		this.fileCounter = Integer.parseInt(fileCounterStr);
 	}
 
+	public static void saveChunkFile(String chunkHash, byte[] chunkData) {
+		try { 
+			 FileOutputStream fos=new FileOutputStream("chunks/" + chunkHash);
+	         fos.write(chunkData);
+	         fos.flush();
+	         fos.close(); 
+		}
+		catch(FileNotFoundException ex)   {
+	         System.out.println("FileNotFoundException : " + ex);
+		}
+		catch(IOException ioe)  {
+	         System.out.println("IOException : " + ioe);	
+		}
+	}
 }

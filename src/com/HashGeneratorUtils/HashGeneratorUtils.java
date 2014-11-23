@@ -10,15 +10,17 @@ import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.deduplication.ChunkHash;
-import com.deduplication.FileChunk;
+import com.deduplication.Chunk;
+import com.deduplication.ChunkIndexTable;
+import com.deduplication.FileProfile;
+import com.deduplication.FileChunkMappings;
 
 public class HashGeneratorUtils {
-	public static void genrateMD5(File file) throws Exception {
-		hashFile(file, "MD5");
+	public static void genrateMD5(File file, FileProfile fpro) throws Exception {
+		hashFile(file, fpro, "MD5");
 	}
 
-	private static void hashFile(File file, String algorithm) throws Exception {
+	private static void hashFile(File file, FileProfile fpro, String algorithm) throws Exception {
 		try (FileInputStream inputStream = new FileInputStream(file)) {
 			MessageDigest digest = MessageDigest.getInstance(algorithm);
 
@@ -29,23 +31,37 @@ public class HashGeneratorUtils {
 
 			digest.update(fileBuffer);
 			String fileHashID = convertByteArrayToHexString(digest.digest());
-			ArrayList<String> hashlist = new ArrayList<String>();
+			
 			String chunkHash;
+			ArrayList<Chunk> fileChunks = new ArrayList<Chunk>();
+			
+			int i = 0;
+			
 			while ((bytesRead = inputStream.read(chunkBuffer)) != -1) {
 				digest.update(chunkBuffer);
 				byte[] hashedBytes = digest.digest();
 				chunkHash = convertByteArrayToHexString(hashedBytes);
-				ChunkHash.writeChunk(chunkHash,chunkBuffer);
+				ChunkIndexTable index = ChunkIndexTable.getInstance();
 				
-				hashlist.add(chunkHash);
-				//ChunkHash.generateTxt("chunklist/list",convertByteArrayToHexString(hashedBytes),append);
+				if(index.containsKey(chunkHash)){
+					int count = Integer.parseInt(index.get(chunkHash)) + 1;
+					index.put(chunkHash, Integer.toString(count));
+				} else {
+					index.put(chunkHash, Integer.toString(1));
+					Chunk.saveChunkFile(chunkHash,chunkBuffer);
+				}
+				
 				java.util.Arrays.fill(chunkBuffer, 0,chunkBuffer.length-1,(byte)0);
-				//append = true;
-				//System.out.println(bytesRead);
-				//System.out.println(convertByteArrayToHexString(hashedBytes));
+				Chunk fileChunk = new Chunk();
+				fileChunk.setId(chunkHash);
+				fileChunk.setNum(i);
+				fileChunk.setSize(bytesRead);
+				fileChunks.add(fileChunk);
+				i=i+1;
 			}
-			//FileChunk.writeFileHash(fileHashID, hashlist);
-			//return convertByteArrayToHexString(hashedBytes);
+			
+			FileChunkMappings.writeFileMapping(fpro, fileChunks);
+
 		} catch (NoSuchAlgorithmException | IOException ex) {
 			throw new Exception("Could not generate hash from file", ex);
 		}

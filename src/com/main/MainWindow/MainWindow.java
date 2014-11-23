@@ -3,36 +3,28 @@ package com.main.MainWindow;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Frame;
 import java.awt.Toolkit;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-
-import java.awt.FlowLayout;
-
 import javax.swing.JButton;
-import javax.swing.SwingConstants;
 
 import java.awt.Color;
 import java.awt.GridLayout;
 
-import javax.swing.JList;
 import javax.swing.JTable;
 
 import com.HashGeneratorUtils.HashGeneratorUtils;
-import com.deduplication.FileChunk;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
+import com.deduplication.ChunkIndexTable;
+import com.deduplication.ChunkedFile;
+import com.deduplication.FileProfile;
+import com.deduplication.FileChunkMappings;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
@@ -40,12 +32,12 @@ import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 
 /*
  * xingyuwu@bu.edu;
@@ -75,6 +67,8 @@ public class MainWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					FileChunkMappings mp = new FileChunkMappings();
+					mp.readChunksByFile("test");
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
 					ImageIcon mianIcon = new ImageIcon("images/cloud.png");
@@ -91,6 +85,7 @@ public class MainWindow {
 	 */
 	public MainWindow() {
 		initialize();
+		ChunkIndexTable.getInstance();
 	}
 
 	/**
@@ -105,9 +100,53 @@ public class MainWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
+		frame.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				ChunkIndexTable.getInstance().Save();
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
 
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				ChunkIndexTable.getInstance().Save();
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		table = CreateTable();
-
+		initTableData();
+		
 		JScrollPane scrollPane = new JScrollPane(table);
 		frame.getContentPane().add(scrollPane);// Using JScrollPane to contain
 												// the table, otherwise the
@@ -148,18 +187,16 @@ public class MainWindow {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fileOpenChooser.getSelectedFile();
+					FileProfile fpro = new FileProfile(file.getName(),file.length());
 					try {
-						HashGeneratorUtils.genrateMD5(file);
+						HashGeneratorUtils.genrateMD5(file, fpro);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					byte[] data = FileChunk.readFileInChunk(file);
-					FileChunk.writeChunkInFile("chunks/" + file.getName(), data);
-
 					// This is where a real application would open the file.
-					Object[] row = { file.getName(),
-							file.length() / 1024 + " K", getCurrentTimeStr(), };
+					Object[] row = { fpro.getName(),
+							fpro.getSize() / 1024 + " K", fpro.getUploadDate()};
 					((DefaultTableModel) table.getModel()).addRow(row);
 				} else {
 				}
@@ -200,7 +237,7 @@ public class MainWindow {
 				if (selectedRow >= 0) {
 					String fileName = (String) table.getValueAt(selectedRow, 0);
 					try {
-						FileChunk.deleteFile("chunks/" + fileName);
+						ChunkedFile.deleteFile("chunks/" + fileName);
 						((DefaultTableModel) table.getModel())
 								.removeRow(selectedRow);
 					} catch (IOException e) {
@@ -251,14 +288,23 @@ public class MainWindow {
 
 		JTable table = new JTable(tableModel);
 		table.setShowVerticalLines(false);
-
+		
 		return table;
 	}
-
-	public String getCurrentTimeStr() {
-		Date date = new Date();
-		// DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		DateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
-		return sdf.format(date);
+	
+	public void initTableData(){
+		FileChunkMappings m = new FileChunkMappings();
+		ArrayList<FileProfile> fileList = null;
+		
+		fileList = m.readFileList();
+		
+		for(FileProfile file:fileList){
+			addRowToTable(file.getName(),Long.toString(file.getSize()), file.getUploadDate().toString());
+		}
+	}
+	
+	public void addRowToTable(String fileName, String size, String uploadTime){
+		Object[] row = { fileName, size + " K", uploadTime };
+		((DefaultTableModel)table.getModel()).addRow(row);
 	}
 }
