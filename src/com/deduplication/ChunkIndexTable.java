@@ -109,4 +109,8 @@ public class ChunkIndexTable extends LinkedHashMap<String, String> {
 		String jsonText = out.toString();
 		System.out.print(jsonText);
 	}
+	
+	public void DeleteChunks(ArrayList<Chunk> chunks){
+		//Check chunks in index table, increase counter or delete it
+	}
 }

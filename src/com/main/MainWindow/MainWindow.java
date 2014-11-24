@@ -196,7 +196,7 @@ public class MainWindow {
 					}
 					// This is where a real application would open the file.
 					Object[] row = { fpro.getName(),
-							fpro.getSize() / 1024 + " K", fpro.getUploadDate()};
+							fpro.getSize() + " K", fpro.getUploadDate()};
 					((DefaultTableModel) table.getModel()).addRow(row);
 				} else {
 				}

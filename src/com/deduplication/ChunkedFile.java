@@ -58,7 +58,6 @@ public class ChunkedFile {
 	}
 	
 	public static void deleteFile(String fpath) throws IOException{
-		File file = new File(fpath);
-		file.delete();
+		//
 	}
 }

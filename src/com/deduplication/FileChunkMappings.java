@@ -50,6 +50,7 @@ public class FileChunkMappings {
 		file.setAttribute("id", fpro.getId());
 		file.setAttribute("time", fpro.getUploadDate());
 		file.setAttribute("size", fpro.getSize().toString());
+		file.setAttribute("length", fpro.getLength().toString());
 
 		// loop for build hash tag
 		for (int temp = 0; temp < chunks.size(); temp++) {
@@ -90,8 +91,9 @@ public class FileChunkMappings {
 			for (int i = 0; i < nodeList.getLength(); i++){
 				String name = nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
 				String size = nodeList.item(i).getAttributes().getNamedItem("size").getNodeValue();
+				String length = nodeList.item(i).getAttributes().getNamedItem("length").getNodeValue();
 				String uploadDate = nodeList.item(i).getAttributes().getNamedItem("time").getNodeValue();
-				FileProfile fpro= new FileProfile(name, Long.parseLong(size));
+				FileProfile fpro= new FileProfile(name, Long.parseLong(length));
 				fpro.setUploadDate(uploadDate);
 				fileList.add(fpro);
 			}
@@ -136,19 +138,6 @@ public class FileChunkMappings {
 	public Node getFileNodeByName(String fileName, NodeList nodeList) {
 		Node node = null;
 		for (int x = 0; x < nodeList.getLength(); x++) {
-			System.out.println("file name: "
-					+ nodeList.item(x).getAttributes().getNamedItem("name")
-							.getNodeValue());
-			System.out.println("file id: "
-					+ nodeList.item(x).getAttributes().getNamedItem("id")
-							.getNodeValue());
-			System.out.println("upload time: "
-					+ nodeList.item(x).getAttributes().getNamedItem("time")
-							.getNodeValue());
-			System.out.println("file size: "
-					+ nodeList.item(x).getAttributes().getNamedItem("size")
-							.getNodeValue());
-
 			if (nodeList.item(x).getAttributes().getNamedItem("name")
 					.getNodeValue().equals(fileName)) {
 				return nodeList.item(x);

@@ -16,6 +16,8 @@ import com.deduplication.FileProfile;
 import com.deduplication.FileChunkMappings;
 
 public class HashGeneratorUtils {
+	private static int CHUNK_SIZE = 128;
+	
 	public static void genrateMD5(File file, FileProfile fpro) throws Exception {
 		hashFile(file, fpro, "MD5");
 	}
@@ -25,7 +27,7 @@ public class HashGeneratorUtils {
 			MessageDigest digest = MessageDigest.getInstance(algorithm);
 
 			byte[] fileBuffer = new byte[(int) file.length()];
-			byte[] chunkBuffer = new byte[128*1024];
+			byte[] chunkBuffer = new byte[CHUNK_SIZE*1024];
 			int bytesRead = -1;
 			boolean append = false;
 
@@ -51,7 +53,9 @@ public class HashGeneratorUtils {
 					Chunk.saveChunkFile(chunkHash,chunkBuffer);
 				}
 				
+				//Clear the array by filling it with 0
 				java.util.Arrays.fill(chunkBuffer, 0,chunkBuffer.length-1,(byte)0);
+				
 				Chunk fileChunk = new Chunk();
 				fileChunk.setId(chunkHash);
 				fileChunk.setNum(i);

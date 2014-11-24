@@ -5,17 +5,23 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class FileProfile{
 	private String id;
 	private String uploadDate;
 	private Long size;
+	private Long length;
 	private ArrayList<Chunk> chunks;
 	private String name;
 
-	public FileProfile(String name, Long size){
+	public FileProfile(String name, Long length){
+		
+		Double doubleSize = length.doubleValue()/1024;
+		
 		this.setName(name);
-		this.setSize(size);
+		this.setSize((Math.round(doubleSize)));
+		this.setLength(length);
 		this.setUploadDate(getCurrentTimeStr());
 	}
 	
@@ -59,8 +65,8 @@ public class FileProfile{
 		this.size = l;
 	}
 
-	public void setSize(String size) {
-		this.size = Long.parseLong(size);
+	public void setSize(String sizeStr) {
+		this.size = Long.parseLong(sizeStr);
 	}
 
 	public void remove() {
@@ -74,7 +80,19 @@ public class FileProfile{
 	public String getCurrentTimeStr() {
 		Date date = new Date();
 		// DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		DateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH);
 		return sdf.format(date);
+	}
+
+	public Long getLength() {
+		return length;
+	}
+
+	public void setLength(Long length) {
+		this.length = length;
+	}
+	
+	public void setLength(String lengthStr) {
+		this.length = Long.parseLong(lengthStr);
 	}
 }
