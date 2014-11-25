@@ -1,5 +1,6 @@
 package com.deduplication;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +65,14 @@ public class Chunk {
 	}
 
 	public static void saveChunkFile(String chunkHash, byte[] chunkData) {
+	    File file =new File("chunks");   //create folder when not exists    
+	    if  (!file .exists()  && !file .isDirectory())      
+	    {       
+	        file .mkdir();    
+	    } else   
+	    {  
+	        System.out.println("//folder exists!");  
+	    }  
 		try { 
 			 FileOutputStream fos=new FileOutputStream("chunks/" + chunkHash);
 	         fos.write(chunkData);
