@@ -30,7 +30,6 @@ import org.xml.sax.SAXException;
 public class FileChunkMappings {
 
 	static String mapping_path = "file_mappings.xml";
-	ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 	ArrayList<FileProfile> fileList = new ArrayList<FileProfile>();
 	
 	public static void writeFileMapping(FileProfile fpro, ArrayList<Chunk> chunks)
@@ -104,7 +103,9 @@ public class FileChunkMappings {
 		return fileList;
 	}
 	
-	public ArrayList<Chunk> readChunksByFile(String fileNmae) {
+	public static ArrayList<Chunk> readChunksByFile(String fileNmae) {
+		
+		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -135,7 +136,7 @@ public class FileChunkMappings {
 		return chunks;
 	}
 
-	public Node getFileNodeByName(String fileName, NodeList nodeList) {
+	public static Node getFileNodeByName(String fileName, NodeList nodeList) {
 		Node node = null;
 		for (int x = 0; x < nodeList.getLength(); x++) {
 			if (nodeList.item(x).getAttributes().getNamedItem("name")
