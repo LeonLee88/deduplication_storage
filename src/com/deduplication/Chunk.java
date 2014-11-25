@@ -69,9 +69,7 @@ public class Chunk {
 	    if  (!file .exists()  && !file .isDirectory())      
 	    {       
 	        file .mkdir();    
-	    } else   
-	    {  
-	        System.out.println("//folder exists!");  
+	    } else	{   
 	    }  
 		try { 
 			 FileOutputStream fos=new FileOutputStream("chunks/" + chunkHash);
