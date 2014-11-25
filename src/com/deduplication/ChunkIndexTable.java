@@ -109,8 +109,37 @@ public class ChunkIndexTable extends LinkedHashMap<String, String> {
 		String jsonText = out.toString();
 		System.out.print(jsonText);
 	}
-	
-	public void DeleteChunks(ArrayList<Chunk> chunks){
+    
+	public static boolean DeleteChunks(ArrayList<Chunk> chunks){
+		
 		//Check chunks in index table, increase counter or delete it
+	
+	for(Chunk chunk:chunks){	
+		String chunkId = chunk.getId();//get hash
+		System.out.println(chunkId);
+		if (ChunkIndexTable.getInstance().containsKey(chunkId)){
+			int i = Integer.parseInt(ChunkIndexTable.getInstance().get(chunkId)); 
+			if(i>1){
+				i=i-1;
+				String s = String.valueOf(i);
+				ChunkIndexTable.getInstance().put(chunkId, s);}
+			if(i==1){
+				String v= ChunkIndexTable.getInstance().get(chunkId);
+				ChunkIndexTable.getInstance().remove(chunkId,v);
+				File fileToDelete = new File("chunks/"+chunkId);
+				if(fileToDelete.isFile())
+				{
+					fileToDelete.delete();
+				}
+				}
+			
+				
+				
+			}
+		}
+	return true;		
 	}
 }
+
+
+

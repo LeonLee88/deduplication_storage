@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 
@@ -18,6 +19,7 @@ import java.awt.GridLayout;
 import javax.swing.JTable;
 
 import com.HashGeneratorUtils.HashGeneratorUtils;
+import com.deduplication.Chunk;
 import com.deduplication.ChunkIndexTable;
 import com.deduplication.ChunkedFile;
 import com.deduplication.FileProfile;
@@ -59,7 +61,7 @@ public class MainWindow {
 	private JButton btnNewFolder;
 	private JFileChooser fileOpenChooser;
 	private JFileChooser fileSaveChooser;
-
+    private JOptionPane messagebox;
 	/**
 	 * Launch the application.
 	 */
@@ -93,25 +95,26 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		//frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		// frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		frame.setBounds(100, 100, 960, 600);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
+		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height
+				/ 2 - frame.getSize().height / 2);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		frame.addWindowListener(new WindowListener() {
-			
+
 			@Override
 			public void windowClosed(WindowEvent arg0) {
 				// TODO Auto-generated method stub
 				ChunkIndexTable.getInstance().Save();
 			}
-			
+
 			@Override
 			public void windowActivated(WindowEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -123,30 +126,30 @@ public class MainWindow {
 			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowIconified(WindowEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 		table = CreateTable();
 		initTableData();
-		
+
 		JScrollPane scrollPane = new JScrollPane(table);
 		frame.getContentPane().add(scrollPane);// Using JScrollPane to contain
 												// the table, otherwise the
@@ -187,7 +190,8 @@ public class MainWindow {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fileOpenChooser.getSelectedFile();
-					FileProfile fpro = new FileProfile(file.getName(),file.length());
+					FileProfile fpro = new FileProfile(file.getName(), file
+							.length());
 					try {
 						HashGeneratorUtils.genrateMD5(file, fpro);
 					} catch (Exception e) {
@@ -195,8 +199,8 @@ public class MainWindow {
 						e.printStackTrace();
 					}
 					// This is where a real application would open the file.
-					Object[] row = { fpro.getName(),
-							fpro.getSize() + " K", fpro.getUploadDate()};
+					Object[] row = { fpro.getName(), fpro.getSize() + " K",
+							fpro.getUploadDate() };
 					((DefaultTableModel) table.getModel()).addRow(row);
 				} else {
 				}
@@ -224,6 +228,7 @@ public class MainWindow {
 			}
 		});
 		panelButton.add(btnDownload);
+		//messagebox.showMessageDialog(frame,"download successfully!"); 
 
 		btnNewFolder = CreateButton(" New Folder", "images/btn_newfolder.png");
 		panelButton.add(btnNewFolder);
@@ -238,8 +243,13 @@ public class MainWindow {
 					String fileName = (String) table.getValueAt(selectedRow, 0);
 					try {
 						ChunkedFile.deleteFile("chunks/" + fileName);
+						ArrayList<Chunk> chunklist = FileChunkMappings
+								.readChunksByFile(fileName);
+						ChunkIndexTable.DeleteChunks(chunklist);
+						
 						((DefaultTableModel) table.getModel())
 								.removeRow(selectedRow);
+						messagebox.showMessageDialog(frame,"Remove successfully!"); 
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -288,23 +298,24 @@ public class MainWindow {
 
 		JTable table = new JTable(tableModel);
 		table.setShowVerticalLines(false);
-		
+
 		return table;
 	}
-	
-	public void initTableData(){
+
+	public void initTableData() {
 		FileChunkMappings m = new FileChunkMappings();
 		ArrayList<FileProfile> fileList = null;
-		
+
 		fileList = m.readFileList();
-		
-		for(FileProfile file:fileList){
-			addRowToTable(file.getName(),Long.toString(file.getSize()), file.getUploadDate().toString());
+
+		for (FileProfile file : fileList) {
+			addRowToTable(file.getName(), Long.toString(file.getSize()), file
+					.getUploadDate().toString());
 		}
 	}
-	
-	public void addRowToTable(String fileName, String size, String uploadTime){
+
+	public void addRowToTable(String fileName, String size, String uploadTime) {
 		Object[] row = { fileName, size + " K", uploadTime };
-		((DefaultTableModel)table.getModel()).addRow(row);
+		((DefaultTableModel) table.getModel()).addRow(row);
 	}
 }
