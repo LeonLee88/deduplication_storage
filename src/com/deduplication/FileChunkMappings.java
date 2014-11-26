@@ -147,4 +147,59 @@ public class FileChunkMappings {
 		}
 		return node;
 	}
+	public static FileProfile getFileInformation(String fileid){
+		
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(mapping_path));
+			NodeList nodeList = document.getElementsByTagName("file");
+			for(int i=0;i<nodeList.getLength();i++){
+				if (nodeList.item(i).getAttributes().getNamedItem("id").getNodeValue().equals(fileid)){
+					String name = nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
+					String length = nodeList.item(i).getAttributes().getNamedItem("length").getNodeValue();
+					FileProfile file=new FileProfile(name,Long.parseLong(length));
+					file.setId(fileid);
+					String size = nodeList.item(i).getAttributes().getNamedItem("size").getNodeValue();
+					file.setSize(size);
+					String uploadDate = nodeList.item(i).getAttributes().getNamedItem("time").getNodeValue();
+					file.setUploadDate(uploadDate);
+					return file;
+				}
+				}
+		}catch(ParserConfigurationException | SAXException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+				}
+		return null;
+		}	
+	
+	public static void deleteFile(String filename) throws Exception {
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db;
+		db = dbf.newDocumentBuilder();
+		Document document = db.parse(new File(mapping_path));
+		NodeList nodeList = document.getElementsByTagName("file");
+		Node e = getFileNodeByName(filename, nodeList);
+		Element root = document.getDocumentElement();//get root node
+		root.removeChild(e);
+
+		try {
+
+			DOMSource source = new DOMSource(document);
+			TransformerFactory transformerFactory = TransformerFactory
+					.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+					"yes");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			StreamResult result = new StreamResult(mapping_path);
+			transformer.transform(source, result);
+
+		} catch (Exception c) {
+			c.printStackTrace();
+		}
+	}
+	
 }
