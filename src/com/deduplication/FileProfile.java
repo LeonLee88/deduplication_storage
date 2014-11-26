@@ -1,5 +1,6 @@
 package com.deduplication;
 
+import java.util.UUID;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,7 +22,8 @@ public class FileProfile {
 	public FileProfile(String name, Long length) {
 
 		Double doubleSize = length.doubleValue() / 1024;
-
+		
+		this.setId();
 		this.setName(name);
 		this.setSize((Math.round(doubleSize)));
 		this.setLength(length);
@@ -32,8 +34,9 @@ public class FileProfile {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setId() {
+		String uuid = UUID.randomUUID().toString();
+		this.id = uuid;
 	}
 
 	public String getName() {

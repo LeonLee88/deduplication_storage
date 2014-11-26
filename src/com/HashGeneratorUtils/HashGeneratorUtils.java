@@ -31,9 +31,6 @@ public class HashGeneratorUtils {
 			int bytesRead = -1;
 			boolean append = false;
 
-			digest.update(fileBuffer);
-			String fileHashID = convertByteArrayToHexString(digest.digest());
-			fpro.setId(fileHashID);
 			
 			String chunkHash;
 			ArrayList<Chunk> fileChunks = new ArrayList<Chunk>();
