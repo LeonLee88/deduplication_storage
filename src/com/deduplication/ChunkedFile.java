@@ -65,7 +65,7 @@ public class ChunkedFile {
 		
 		FileProfile fp = FileChunkMappings.getFileInformation(fileId);
 		ArrayList<Chunk> chunks = fp.getChunks();
-		if (!chunks.isEmpty()) {
+		if (fp != null && !chunks.isEmpty()) {
 			byte[] data = new byte[fp.getLength().intValue()];
 			int offset = 0;
 			int len;

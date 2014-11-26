@@ -152,7 +152,7 @@ public class FileChunkMappings {
 		}
 		return node;
 	}
-	public static FileProfile getFileInformation(String fileid){
+	public static FileProfile getFileInformation(String fileId){
 		
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -160,17 +160,20 @@ public class FileChunkMappings {
 			Document document = db.parse(new File(mapping_path));
 			NodeList nodeList = document.getElementsByTagName("file");
 			for(int i=0;i<nodeList.getLength();i++){
-				if (nodeList.item(i).getAttributes().getNamedItem("id").getNodeValue().equals(fileid)){
+				if (nodeList.item(i).getAttributes().getNamedItem("id").getNodeValue().equals(fileId)){
 					FileProfile file=new FileProfile();
 					String name = nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
 					file.setName(name);
 					String length = nodeList.item(i).getAttributes().getNamedItem("length").getNodeValue();
 					file.setLength(Long.parseLong(length));
-					file.setId(fileid);
+					file.setId(fileId);
 					String size = nodeList.item(i).getAttributes().getNamedItem("size").getNodeValue();
 					file.setSize(size);
 					String uploadDate = nodeList.item(i).getAttributes().getNamedItem("time").getNodeValue();
 					file.setUploadDate(uploadDate);
+					
+					file.setChunks(getChunksByFile(fileId));
+					
 					return file;
 				}
 				}

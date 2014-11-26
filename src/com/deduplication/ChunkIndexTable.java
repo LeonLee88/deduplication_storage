@@ -121,12 +121,12 @@ public class ChunkIndexTable extends LinkedHashMap<String, String> {
 			if (ChunkIndexTable.getInstance().containsKey(chunkId)) {
 				int i = Integer.parseInt(ChunkIndexTable.getInstance().get(
 						chunkId));
-				if (i > 1) {
+				if (i >= 1) {
 					i = i - 1;
 					String s = String.valueOf(i);
 					ChunkIndexTable.getInstance().put(chunkId, s);
 				}
-				if (i == 1) {
+				if (i == 0) {
 					String v = ChunkIndexTable.getInstance().get(chunkId);
 					ChunkIndexTable.getInstance().remove(chunkId, v);
 					File fileToDelete = new File("chunks/" + chunkId);
