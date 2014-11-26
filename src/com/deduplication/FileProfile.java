@@ -34,6 +34,10 @@ public class FileProfile {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	public void setId() {
 		String uuid = UUID.randomUUID().toString();
 		this.id = uuid;
