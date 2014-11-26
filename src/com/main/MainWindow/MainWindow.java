@@ -70,7 +70,6 @@ public class MainWindow {
 			public void run() {
 				try {
 					FileChunkMappings mp = new FileChunkMappings();
-					mp.readChunksByFile("test");
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
 					ImageIcon mianIcon = new ImageIcon("images/cloud.png");
@@ -190,8 +189,7 @@ public class MainWindow {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fileOpenChooser.getSelectedFile();
-					FileProfile fpro = new FileProfile(file.getName(), file
-							.length());
+					FileProfile fpro = new FileProfile(file);
 					try {
 						HashGeneratorUtils.genrateMD5(file, fpro);
 					} catch (Exception e) {
@@ -199,7 +197,7 @@ public class MainWindow {
 						e.printStackTrace();
 					}
 					// This is where a real application would open the file.
-					Object[] row = { fpro.getName(), fpro.getSize() + " K",
+					Object[] row = {fpro.getId(), fpro.getName(), fpro.getSize() + " K",
 							fpro.getUploadDate() };
 					((DefaultTableModel) table.getModel()).addRow(row);
 				} else {
@@ -213,8 +211,10 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String fileName = (String) table.getValueAt(
+				String fileId = (String) table.getValueAt(
 						table.getSelectedRow(), 0);
+				String fileName = (String) table.getValueAt(
+						table.getSelectedRow(), 1);
 				// Retrieve chunks based on fileName and prompt to user to save
 				fileSaveChooser = new JFileChooser();
 				fileSaveChooser.setSelectedFile(new File("C:/" + fileName));
@@ -240,19 +240,14 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				int selectedRow = table.getSelectedRow();
 				if (selectedRow >= 0) {
-					String fileName = (String) table.getValueAt(selectedRow, 0);
-					try {
-						ChunkedFile.deleteFile("chunks/" + fileName);
-						ArrayList<Chunk> chunklist = FileChunkMappings
-								.readChunksByFile(fileName);
-						ChunkIndexTable.DeleteChunks(chunklist);
-						
-						((DefaultTableModel) table.getModel())
-								.removeRow(selectedRow);
-						messagebox.showMessageDialog(frame,"Remove successfully!"); 
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					String fileId = (String) table.getValueAt(selectedRow, 0);
+					String fileName = (String) table.getValueAt(selectedRow, 1);
+					ArrayList<Chunk> chunklist = FileChunkMappings.getChunksByFile(fileId);
+					ChunkIndexTable.DeleteChunks(chunklist);
+					FileChunkMappings.deleteFile(fileId);
+					((DefaultTableModel) table.getModel())
+							.removeRow(selectedRow);
+					messagebox.showMessageDialog(frame,"Remove successfully!");
 				}
 			}
 		});
@@ -292,6 +287,7 @@ public class MainWindow {
 			}
 		};
 
+		tableModel.addColumn("File ID");
 		tableModel.addColumn("File Name");
 		tableModel.addColumn("File Size");
 		tableModel.addColumn("Upload Time");
@@ -309,13 +305,13 @@ public class MainWindow {
 		fileList = m.readFileList();
 
 		for (FileProfile file : fileList) {
-			addRowToTable(file.getName(), Long.toString(file.getSize()), file
+			addRowToTable(file.getId(), file.getName(), Long.toString(file.getSize()), file
 					.getUploadDate().toString());
 		}
 	}
 
-	public void addRowToTable(String fileName, String size, String uploadTime) {
-		Object[] row = { fileName, size + " K", uploadTime };
+	public void addRowToTable(String id, String fileName, String size, String uploadTime) {
+		Object[] row = {id, fileName, size + " K", uploadTime };
 		((DefaultTableModel) table.getModel()).addRow(row);
 	}
 }

@@ -43,6 +43,7 @@ import org.json.simple.parser.ParseException;
 public class ChunkIndexTable extends LinkedHashMap<String, String> {
 	private static ChunkIndexTable uniqueInstance;
 	private String path = "chunkIndex.json";
+
 	public ChunkIndexTable() {
 		// key is hash of a chunk, value is the number of file which contains
 		// that chunk
@@ -83,9 +84,10 @@ public class ChunkIndexTable extends LinkedHashMap<String, String> {
 
 			};
 
-			LinkedHashMap<String, String> m = (LinkedHashMap) parser.parse(indexJsonStr, containerFactory);
+			LinkedHashMap<String, String> m = (LinkedHashMap) parser.parse(
+					indexJsonStr, containerFactory);
 			this.putAll(m);
-			
+
 		} catch (ParseException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -97,7 +99,7 @@ public class ChunkIndexTable extends LinkedHashMap<String, String> {
 		try {
 			FileWriter jsonFileWriter = new FileWriter(path);
 			JSONObject indexJsonObject = new JSONObject(this.getInstance());
-			//JSONValue.writeJSONString(this.getInstance(), out);
+			// JSONValue.writeJSONString(this.getInstance(), out);
 			jsonFileWriter.write(indexJsonObject.toJSONString());
 			jsonFileWriter.flush();
 			jsonFileWriter.close();
@@ -109,37 +111,31 @@ public class ChunkIndexTable extends LinkedHashMap<String, String> {
 		String jsonText = out.toString();
 		System.out.print(jsonText);
 	}
-    
-	public static boolean DeleteChunks(ArrayList<Chunk> chunks){
-		
-		//Check chunks in index table, increase counter or delete it
-	
-	for(Chunk chunk:chunks){	
-		String chunkId = chunk.getId();//get hash
-		System.out.println(chunkId);
-		if (ChunkIndexTable.getInstance().containsKey(chunkId)){
-			int i = Integer.parseInt(ChunkIndexTable.getInstance().get(chunkId)); 
-			if(i>1){
-				i=i-1;
-				String s = String.valueOf(i);
-				ChunkIndexTable.getInstance().put(chunkId, s);}
-			if(i==1){
-				String v= ChunkIndexTable.getInstance().get(chunkId);
-				ChunkIndexTable.getInstance().remove(chunkId,v);
-				File fileToDelete = new File("chunks/"+chunkId);
-				if(fileToDelete.isFile())
-				{
-					fileToDelete.delete();
+
+	public static boolean DeleteChunks(ArrayList<Chunk> chunks) {
+
+		// Check chunks in index table, increase counter or delete it
+
+		for (Chunk chunk : chunks) {
+			String chunkId = chunk.getId();// get hash
+			if (ChunkIndexTable.getInstance().containsKey(chunkId)) {
+				int i = Integer.parseInt(ChunkIndexTable.getInstance().get(
+						chunkId));
+				if (i > 1) {
+					i = i - 1;
+					String s = String.valueOf(i);
+					ChunkIndexTable.getInstance().put(chunkId, s);
 				}
+				if (i == 1) {
+					String v = ChunkIndexTable.getInstance().get(chunkId);
+					ChunkIndexTable.getInstance().remove(chunkId, v);
+					File fileToDelete = new File("chunks/" + chunkId);
+					if (fileToDelete.isFile()) {
+						fileToDelete.delete();
+					}
 				}
-			
-				
-				
 			}
 		}
-	return true;		
+		return true;
 	}
 }
-
-
-

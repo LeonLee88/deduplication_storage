@@ -19,15 +19,20 @@ public class FileProfile {
 	private ArrayList<Chunk> chunks;
 	private String name;
 
-	public FileProfile(String name, Long length) {
-
-		Double doubleSize = length.doubleValue() / 1024;
+	public FileProfile(File file) {
+		
+		
 		
 		this.setId();
-		this.setName(name);
+		this.setName(file.getName());
+		this.setLength(file.length());
+		Double doubleSize = length.doubleValue() / 1024;
 		this.setSize((Math.round(doubleSize)));
-		this.setLength(length);
 		this.setUploadDate(getCurrentTimeStr());
+	}
+	
+	public FileProfile(){
+		
 	}
 
 	public String getId() {

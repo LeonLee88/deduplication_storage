@@ -60,4 +60,33 @@ public class ChunkedFile {
 	public static void deleteFile(String fpath) throws IOException{
 		//
 	}
+	
+	public static byte[] retriveFileData(String fileId) {
+		
+		FileProfile fp = FileChunkMappings.getFileInformation(fileId);
+		ArrayList<Chunk> chunks = fp.getChunks();
+		if (!chunks.isEmpty()) {
+			byte[] data = new byte[fp.getLength().intValue()];
+			int offset = 0;
+			int len;
+			File file;
+			for (Chunk chunk : chunks) {
+				len = chunk.getSize();
+				File chunkfile = new File("chunks/" + chunk.getId());
+				try {
+					FileInputStream inputStream = new FileInputStream(chunkfile);
+					inputStream.read(data, offset, len);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				offset = offset + chunk.getSize();
+			}
+
+			return data;
+		} else {
+			return null;
+		}
+	}
 }

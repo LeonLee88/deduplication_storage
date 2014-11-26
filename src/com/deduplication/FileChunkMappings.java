@@ -88,11 +88,16 @@ public class FileChunkMappings {
 			NodeList nodeList = document.getElementsByTagName("file");
 			
 			for (int i = 0; i < nodeList.getLength(); i++){
+				String id = nodeList.item(i).getAttributes().getNamedItem("id").getNodeValue();
 				String name = nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
 				String size = nodeList.item(i).getAttributes().getNamedItem("size").getNodeValue();
 				String length = nodeList.item(i).getAttributes().getNamedItem("length").getNodeValue();
 				String uploadDate = nodeList.item(i).getAttributes().getNamedItem("time").getNodeValue();
-				FileProfile fpro= new FileProfile(name, Long.parseLong(length));
+				FileProfile fpro= new FileProfile();
+				fpro.setId(id);
+				fpro.setName(name);
+				fpro.setSize(size);
+				fpro.setLength(length);
 				fpro.setUploadDate(uploadDate);
 				fileList.add(fpro);
 			}
@@ -103,7 +108,7 @@ public class FileChunkMappings {
 		return fileList;
 	}
 	
-	public static ArrayList<Chunk> readChunksByFile(String fileNmae) {
+	public static ArrayList<Chunk> getChunksByFile(String fileId) {
 		
 		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 		try {
@@ -111,7 +116,7 @@ public class FileChunkMappings {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document document = db.parse(new File(mapping_path));
 			NodeList nodeList = document.getElementsByTagName("file");
-			Node fileNode = getFileNodeByName(fileNmae, nodeList);
+			Node fileNode = getFileNodeByName(fileId, nodeList);
 			// 读取<file>里的内容， 包括file名称、file的id，上传时间，上传大小
 			if (fileNode != null && fileNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element e = (Element) fileNode;
@@ -121,7 +126,7 @@ public class FileChunkMappings {
 				for (int x = 0; x < sizechunk; x++) {
 					Chunk tempChunk = new Chunk();
 					tempChunk.setNum(nodeList2.item(x).getAttributes()
-							.getNamedItem("number").getNodeValue());
+							.getNamedItem("num").getNodeValue());
 					tempChunk.setSize(nodeList2.item(x).getAttributes()
 							.getNamedItem("size").getNodeValue());
 					tempChunk.setId(nodeList2.item(x).getTextContent());
@@ -136,11 +141,11 @@ public class FileChunkMappings {
 		return chunks;
 	}
 
-	public static Node getFileNodeByName(String fileName, NodeList nodeList) {
+	public static Node getFileNodeByName(String fileId, NodeList nodeList) {
 		Node node = null;
 		for (int x = 0; x < nodeList.getLength(); x++) {
-			if (nodeList.item(x).getAttributes().getNamedItem("name")
-					.getNodeValue().equals(fileName)) {
+			if (nodeList.item(x).getAttributes().getNamedItem("id")
+					.getNodeValue().equals(fileId)) {
 				return nodeList.item(x);
 			}
 
@@ -156,9 +161,11 @@ public class FileChunkMappings {
 			NodeList nodeList = document.getElementsByTagName("file");
 			for(int i=0;i<nodeList.getLength();i++){
 				if (nodeList.item(i).getAttributes().getNamedItem("id").getNodeValue().equals(fileid)){
+					FileProfile file=new FileProfile();
 					String name = nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
+					file.setName(name);
 					String length = nodeList.item(i).getAttributes().getNamedItem("length").getNodeValue();
-					FileProfile file=new FileProfile(name,Long.parseLong(length));
+					file.setLength(Long.parseLong(length));
 					file.setId(fileid);
 					String size = nodeList.item(i).getAttributes().getNamedItem("size").getNodeValue();
 					file.setSize(size);
@@ -174,19 +181,19 @@ public class FileChunkMappings {
 		return null;
 		}	
 	
-	public static void deleteFile(String filename) throws Exception {
+	public static void deleteFile(String fileId) {
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
-		db = dbf.newDocumentBuilder();
-		Document document = db.parse(new File(mapping_path));
-		NodeList nodeList = document.getElementsByTagName("file");
-		Node e = getFileNodeByName(filename, nodeList);
-		Element root = document.getDocumentElement();//get root node
-		root.removeChild(e);
 
 		try {
 
+			db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(mapping_path));
+			NodeList nodeList = document.getElementsByTagName("file");
+			Node e = getFileNodeByName(fileId, nodeList);
+			Element root = document.getDocumentElement();//get root node
+			root.removeChild(e);
 			DOMSource source = new DOMSource(document);
 			TransformerFactory transformerFactory = TransformerFactory
 					.newInstance();
