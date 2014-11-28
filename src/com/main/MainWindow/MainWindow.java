@@ -38,7 +38,9 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 /*
@@ -220,12 +222,30 @@ public class MainWindow {
 						table.getSelectedRow(), 1);
 				// Retrieve chunks based on fileName and prompt to user to save
 				fileSaveChooser = new JFileChooser();
-				fileSaveChooser.setSelectedFile(new File("C:/" + fileName));
+				fileSaveChooser.setSelectedFile(new File("D:/" + fileName));
 
 				int returnVal = fileSaveChooser.showSaveDialog(frame);
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-
+					File fileToSave = fileSaveChooser.getSelectedFile();
+					if(!fileToSave.exists()){
+						try {
+							fileToSave.createNewFile();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+					try {
+						FileOutputStream fos = new FileOutputStream(fileToSave);
+						fos.write(ChunkedFile.retriveFileData(fileId));
+						fos.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				} else {
 				}
 			}
