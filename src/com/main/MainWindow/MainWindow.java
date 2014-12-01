@@ -63,7 +63,8 @@ public class MainWindow {
 	private JButton btnNewFolder;
 	private JFileChooser fileOpenChooser;
 	private JFileChooser fileSaveChooser;
-    private JOptionPane messagebox;
+	private JOptionPane messagebox;
+
 	/**
 	 * Launch the application.
 	 */
@@ -202,8 +203,8 @@ public class MainWindow {
 						e.printStackTrace();
 					}
 					// This is where a real application would open the file.
-					Object[] row = {fpro.getId(), fpro.getName(), fpro.getSize() + " K",
-							fpro.getUploadDate() };
+					Object[] row = { fpro.getId(), fpro.getName(),
+							fpro.getSize() + " K", fpro.getUploadDate() };
 					((DefaultTableModel) table.getModel()).addRow(row);
 				} else {
 				}
@@ -216,42 +217,49 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String fileId = (String) table.getValueAt(
-						table.getSelectedRow(), 0);
-				String fileName = (String) table.getValueAt(
-						table.getSelectedRow(), 1);
-				// Retrieve chunks based on fileName and prompt to user to save
-				fileSaveChooser = new JFileChooser();
-				fileSaveChooser.setSelectedFile(new File("D:/" + fileName));
+				int selectedRow = table.getSelectedRow();
+				if (selectedRow >= 0) {
+					String fileId = (String) table.getValueAt(
+							table.getSelectedRow(), 0);
+					String fileName = (String) table.getValueAt(
+							table.getSelectedRow(), 1);
+					// Retrieve chunks based on fileName and prompt to user to
+					// save
+					fileSaveChooser = new JFileChooser();
+					fileSaveChooser.setSelectedFile(new File("D:/" + fileName));
 
-				int returnVal = fileSaveChooser.showSaveDialog(frame);
+					int returnVal = fileSaveChooser.showSaveDialog(frame);
 
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File fileToSave = fileSaveChooser.getSelectedFile();
-					if(!fileToSave.exists()){
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+						File fileToSave = fileSaveChooser.getSelectedFile();
+						if (!fileToSave.exists()) {
+							try {
+								fileToSave.createNewFile();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+
 						try {
-							fileToSave.createNewFile();
+							FileOutputStream fos = new FileOutputStream(
+									fileToSave);
+							fos.write(ChunkedFile.retriveFileData(fileId));
+							fos.close();
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+
+					} else {
 					}
-					
-					try {
-						FileOutputStream fos = new FileOutputStream(fileToSave);
-						fos.write(ChunkedFile.retriveFileData(fileId));
-						fos.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
 				} else {
+					messagebox.showMessageDialog(frame, "No file selected!");
 				}
 			}
 		});
 		panelButton.add(btnDownload);
-		//messagebox.showMessageDialog(frame,"download successfully!"); 
+		// messagebox.showMessageDialog(frame,"download successfully!");
 
 		btnNewFolder = CreateButton(" New Folder", "images/btn_newfolder.png");
 		panelButton.add(btnNewFolder);
@@ -265,12 +273,13 @@ public class MainWindow {
 				if (selectedRow >= 0) {
 					String fileId = (String) table.getValueAt(selectedRow, 0);
 					String fileName = (String) table.getValueAt(selectedRow, 1);
-					ArrayList<Chunk> chunklist = FileChunkMappings.getChunksByFile(fileId);
+					ArrayList<Chunk> chunklist = FileChunkMappings
+							.getChunksByFile(fileId);
 					ChunkIndexTable.DeleteChunks(chunklist);
 					FileChunkMappings.deleteFile(fileId);
 					((DefaultTableModel) table.getModel())
 							.removeRow(selectedRow);
-					messagebox.showMessageDialog(frame,"Remove successfully!");
+					messagebox.showMessageDialog(frame, "Remove successfully!");
 				}
 			}
 		});
@@ -328,13 +337,14 @@ public class MainWindow {
 		fileList = m.readFileList();
 
 		for (FileProfile file : fileList) {
-			addRowToTable(file.getId(), file.getName(), Long.toString(file.getSize()), file
-					.getUploadDate().toString());
+			addRowToTable(file.getId(), file.getName(), Long.toString(file
+					.getSize()), file.getUploadDate().toString());
 		}
 	}
 
-	public void addRowToTable(String id, String fileName, String size, String uploadTime) {
-		Object[] row = {id, fileName, size + " K", uploadTime };
+	public void addRowToTable(String id, String fileName, String size,
+			String uploadTime) {
+		Object[] row = { id, fileName, size + " K", uploadTime };
 		((DefaultTableModel) table.getModel()).addRow(row);
 	}
 }

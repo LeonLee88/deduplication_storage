@@ -16,7 +16,7 @@ import com.deduplication.FileProfile;
 import com.deduplication.FileChunkMappings;
 
 public class HashGeneratorUtils {
-	private static int CHUNK_SIZE = 128;
+	private static int CHUNK_SIZE = 28;
 	
 	public static void genrateMD5(File file, FileProfile fpro) throws Exception {
 		hashFile(file, fpro, "MD5");
