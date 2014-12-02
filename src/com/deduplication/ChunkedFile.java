@@ -41,28 +41,27 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class ChunkedFile {
-	public static byte[] reafproInChunk(File file){
+	public static byte[] reafproInChunk(File file) {
 		byte[] fileByteData = new byte[(int) file.length()];
-        try {
-              FileInputStream fileInputStream = new FileInputStream(file);
-              fileInputStream.read(fileByteData);
-         } catch (FileNotFoundException e) {
-                     System.out.println("File Not Found.");
-                     e.printStackTrace();
-         }
-         catch (IOException e1) {
-                  System.out.println("Error Reading The File.");
-                   e1.printStackTrace();
-         }
+		try {
+			FileInputStream fileInputStream = new FileInputStream(file);
+			fileInputStream.read(fileByteData);
+		} catch (FileNotFoundException e) {
+			System.out.println("File Not Found.");
+			e.printStackTrace();
+		} catch (IOException e1) {
+			System.out.println("Error Reading The File.");
+			e1.printStackTrace();
+		}
 		return fileByteData;
 	}
-	
-	public static void deleteFile(String fpath) throws IOException{
+
+	public static void deleteFile(String fpath) throws IOException {
 		//
 	}
-	
+
 	public static byte[] retriveFileData(String fileId) {
-		
+
 		FileProfile fp = FileChunkMappings.getFileInformation(fileId);
 		ArrayList<Chunk> chunks = fp.getChunks();
 		if (fp != null && !chunks.isEmpty()) {
@@ -70,8 +69,16 @@ public class ChunkedFile {
 			int offset = 0;
 			int len;
 			File file;
-			for (Chunk chunk : chunks) {
-				len = chunk.getSize();
+			for (int i = 0; i < chunks.size(); i++) {
+				Chunk chunk = chunks.get(i);
+
+				if (i == chunks.size() - 1) {
+					len = fp.getLastChunkSize();
+				} else {
+					len = fp.getChunkSize();
+
+				}
+
 				File chunkfile = new File("chunks/" + chunk.getId());
 				try {
 					FileInputStream inputStream = new FileInputStream(chunkfile);
@@ -81,7 +88,7 @@ public class ChunkedFile {
 					e.printStackTrace();
 				}
 
-				offset = offset + chunk.getSize();
+				offset = offset + len;
 			}
 
 			return data;

@@ -19,6 +19,7 @@ public class HashGeneratorUtils {
 	private static int CHUNK_SIZE = 28;
 	
 	public static void genrateMD5(File file, FileProfile fpro) throws Exception {
+		fpro.setChunkSize(CHUNK_SIZE*1024);
 		hashFile(file, fpro, "MD5");
 	}
 
@@ -36,7 +37,7 @@ public class HashGeneratorUtils {
 			ArrayList<Chunk> fileChunks = new ArrayList<Chunk>();
 			
 			int i = 0;
-			
+			int lastChunkSize = -1;
 			while ((bytesRead = inputStream.read(chunkBuffer)) != -1) {
 				digest.update(chunkBuffer);
 				byte[] hashedBytes = digest.digest();
@@ -53,15 +54,15 @@ public class HashGeneratorUtils {
 				
 				//Clear the array by filling it with 0
 				java.util.Arrays.fill(chunkBuffer, 0,chunkBuffer.length-1,(byte)0);
-				
+				lastChunkSize = bytesRead;
 				Chunk fileChunk = new Chunk();
 				fileChunk.setId(chunkHash);
-				fileChunk.setNum(i);
-				fileChunk.setSize(bytesRead);
+				//fileChunk.setNum(i);
 				fileChunks.add(fileChunk);
 				i=i+1;
 			}
 			
+			fpro.setLastChunkSize(lastChunkSize);
 			FileChunkMappings.writeFileMapping(fpro, fileChunks);
 
 		} catch (NoSuchAlgorithmException | IOException ex) {

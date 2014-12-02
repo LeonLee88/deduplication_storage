@@ -50,12 +50,14 @@ public class FileChunkMappings {
 		file.setAttribute("time", fpro.getUploadDate());
 		file.setAttribute("size", fpro.getSize().toString());
 		file.setAttribute("length", fpro.getLength().toString());
+		file.setAttribute("chunkSize", fpro.getChunkSize().toString());
+		file.setAttribute("lastChunkSize", fpro.getLastChunkSize().toString());
 
 		// loop for build hash tag
 		for (int temp = 0; temp < chunks.size(); temp++) {
 			Element chunk = doc.createElement("chunk");
-			chunk.setAttribute("num", chunks.get(temp).getNum().toString());
-			chunk.setAttribute("size", chunks.get(temp).getSize().toString());
+			//chunk.setAttribute("num", chunks.get(temp).getNum().toString());
+			//chunk.setAttribute("size", chunks.get(temp).getSize().toString());
 			Text chunktext = doc.createTextNode(chunks.get(temp).getId());
 			chunk.appendChild(chunktext);
 			file.appendChild(chunk);
@@ -125,10 +127,8 @@ public class FileChunkMappings {
 				int sizechunk = nodeList2.getLength();
 				for (int x = 0; x < sizechunk; x++) {
 					Chunk tempChunk = new Chunk();
-					tempChunk.setNum(nodeList2.item(x).getAttributes()
-							.getNamedItem("num").getNodeValue());
-					tempChunk.setSize(nodeList2.item(x).getAttributes()
-							.getNamedItem("size").getNodeValue());
+					//tempChunk.setNum(nodeList2.item(x).getAttributes().getNamedItem("num").getNodeValue());
+					//tempChunk.setSize(nodeList2.item(x).getAttributes().getNamedItem("size").getNodeValue());
 					tempChunk.setId(nodeList2.item(x).getTextContent());
 					chunks.add(tempChunk);
 				}
@@ -169,6 +169,10 @@ public class FileChunkMappings {
 					file.setId(fileId);
 					String size = nodeList.item(i).getAttributes().getNamedItem("size").getNodeValue();
 					file.setSize(size);
+					String chunkSize = nodeList.item(i).getAttributes().getNamedItem("chunkSize").getNodeValue();
+					file.setChunkSize(chunkSize);
+					String lastChunkSize = nodeList.item(i).getAttributes().getNamedItem("lastChunkSize").getNodeValue();
+					file.setLastChunkSize(lastChunkSize);
 					String uploadDate = nodeList.item(i).getAttributes().getNamedItem("time").getNodeValue();
 					file.setUploadDate(uploadDate);
 					

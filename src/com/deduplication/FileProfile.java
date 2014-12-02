@@ -15,6 +15,8 @@ public class FileProfile {
 	private String id;
 	private String uploadDate;
 	private Long size;
+	private Integer chunkSize;
+	private Integer lastChunkSize;
 	private Long length;
 	private ArrayList<Chunk> chunks;
 	private String name;
@@ -119,8 +121,15 @@ public class FileProfile {
 			int offset = 0;
 			int len;
 			File file;
-			for (Chunk chunk : this.chunks) {
-				len = chunk.getSize();
+			for (int i = 0; i< this.chunks.size(); i++) {
+				Chunk chunk = this.chunks.get(i);
+				
+				if(i == this.chunks.size()-1){
+					len = this.getChunkSize();
+				} else {
+					len = this.getLastChunkSize();
+				}
+				
 				File chunkfile = new File("chunks/" + chunk.getId());
 				try {
 					FileInputStream inputStream = new FileInputStream(chunkfile);
@@ -130,12 +139,36 @@ public class FileProfile {
 					e.printStackTrace();
 				}
 
-				offset = offset + chunk.getSize();
+				offset = offset + len;
 			}
 
 			return data;
 		} else {
 			return null;
 		}
+	}
+
+	public Integer getChunkSize() {
+		return chunkSize;
+	}
+
+	public void setChunkSize(Integer chunkSize) {
+		this.chunkSize = chunkSize;
+	}
+	
+	public void setChunkSize(String chunkSize) {
+		this.chunkSize = Integer.parseInt(chunkSize);
+	}
+
+	public Integer getLastChunkSize() {
+		return lastChunkSize;
+	}
+
+	public void setLastChunkSize(Integer lastChunkSize) {
+		this.lastChunkSize = lastChunkSize;
+	}
+	
+	public void setLastChunkSize(String lastChunkSize) {
+		this.lastChunkSize = Integer.parseInt(lastChunkSize);
 	}
 }
