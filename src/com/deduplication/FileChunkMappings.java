@@ -110,6 +110,26 @@ public class FileChunkMappings {
 		return fileList;
 	}
 	
+	public static String getIdByFilename(String fileName) {
+
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(mapping_path));
+			NodeList nodeList = document.getElementsByTagName("file");
+			for (int i=0;i<nodeList.getLength();i++) {
+				System.out.println("in");
+				if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equals(fileName)){
+					System.out.println("FOUND");
+					return nodeList.item(i).getAttributes().getNamedItem("id").getNodeValue();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null; // **********************
+	}
+	
 	public static ArrayList<Chunk> getChunksByFile(String fileId) {
 		
 		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
