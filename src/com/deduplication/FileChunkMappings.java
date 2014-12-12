@@ -118,9 +118,7 @@ public class FileChunkMappings {
 			Document document = db.parse(new File(mapping_path));
 			NodeList nodeList = document.getElementsByTagName("file");
 			for (int i=0;i<nodeList.getLength();i++) {
-				System.out.println("in");
 				if(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue().equals(fileName)){
-					System.out.println("FOUND");
 					return nodeList.item(i).getAttributes().getNamedItem("id").getNodeValue();
 				}
 			}
