@@ -22,17 +22,17 @@ public class DBLS {
 			BufferedReader br=new BufferedReader(is);
 			try{
 				while(true){
-				System.out.println("#################################################");
-				System.out.println("              DBLS Command Line UI               ");
-				System.out.println("-------------------------------------------------");
-				System.out.println("                 *MAIN MENU*                     ");
-				System.out.println("                                                 ");		
-				System.out.println("                1. LIST FILES                    ");
-				System.out.println("                2. UPLOAD                        ");
-				System.out.println("                3. REMOVE                        ");
-				System.out.println("                4. DOWNLOAD                      ");
-				System.out.println("                5. QUIT                          ");
-				System.out.println("-------------------------------------------------");
+				System.out.println("##########################################################################");
+				System.out.println("                           DBLS Command Line UI                           ");
+				System.out.println("--------------------------------------------------------------------------");
+				System.out.println("                              *MAIN MENU*                                 ");
+				System.out.println("                                                                          ");		
+				System.out.println("                             1. LIST FILES                                ");
+				System.out.println("                             2. UPLOAD                                    ");
+				System.out.println("                             3. REMOVE                                    ");
+				System.out.println("                             4. DOWNLOAD                                  ");
+				System.out.println("                             5. QUIT                                      ");
+				System.out.println("--------------------------------------------------------------------------");
 				System.out.print(" Command # >> ");	
 				
             		switch ((String) br.readLine()) {
@@ -40,7 +40,7 @@ public class DBLS {
 						case "2": { jump2();break; }	//upload
 						case "3": { jump3();break; }	//remove
 						case "4": { jump4();break; }	//download
-						case "5": { jump5();break; }	//quit
+						case "5": { jump5();break; }	//quit&write json
             		} //switch end
 				} //while end
 			}catch(IOException e){
@@ -61,26 +61,32 @@ public class DBLS {
 	
 	public static void jump1() {
 	// List File
-		System.out.println("-------------------------------------------------");
-		System.out.println("               *FILE LIST*                       ");
+		System.out.println("--------------------------------------------------------------------------");
+		System.out.println("                            *FILE LIST*                                   ");
 		
 		return;
 	}
 	
 	public static void jump2() {
 	// Upload File	
-		System.out.println("-------------------------------------------------");
+		System.out.println("--------------------------------------------------------------------------");
 		InputStreamReader is=new InputStreamReader(System.in);
         BufferedReader br=new BufferedReader(is);
         String filename;
         try{
-        		System.out.println(" # UPLOAD: Please ENTER the directory of file (q/Q to return to menu)");
-        		System.out.print(" #   Directory >> ");
+        	while(true){
+        		System.out.println(" # UPLOAD: Please ENTER the directory of file (ENTER q to return to menu)");
+        		System.out.print(" # Directory >> ");
         		filename=(String) br.readLine();
+        		if(!filename.equals("q")){
         			uploadfile(filename);
         			System.out.println(" # Upload File Success!");
-        			System.out.println();
-        	return;   
+        			System.out.println();	
+        		}else{
+        			return;
+        		}
+        	}
+
         }catch(IOException e){
             System.out.println("System Error!");
             e.printStackTrace();
@@ -98,18 +104,25 @@ public class DBLS {
 	
 	public static void jump3() {
 	// Remove File
-		System.out.println("-------------------------------------------------");
-		System.out.println(" # REMOVE: Please ENTER the Filename");
-		System.out.print(" #   Filename >> ");
+		System.out.println("--------------------------------------------------------------------------");
+
 		InputStreamReader is=new InputStreamReader(System.in);
         BufferedReader br=new BufferedReader(is);
         String filename;
         try{
-            filename=(String) br.readLine();
-            	removefile(filename);
-        		System.out.println(" # Remove File Success!");
-        		System.out.println();
-            	return;
+        	while (true){
+        		System.out.println(" # REMOVE: Please ENTER the filename (ENTER q to return to menu)");
+        		System.out.print(" # Filename >> ");
+        		filename=(String) br.readLine();
+        		if(!filename.equals("q")){
+        			removefile(filename);
+        			System.out.println(" # Remove File Success!");
+        			System.out.println();
+        		}else{
+        			return;
+        		}
+        	}
+
         }catch(IOException e){
             System.out.println("System Error!");
             e.printStackTrace();
@@ -127,7 +140,7 @@ public class DBLS {
 	
 	public static void jump4() {
 	// Download File
-		System.out.println("-------------------------------------------------");
+		System.out.println("--------------------------------------------------------------------------");
 		InputStreamReader is=new InputStreamReader(System.in);
         BufferedReader br=new BufferedReader(is);
         String filename;
@@ -160,6 +173,7 @@ public class DBLS {
 	
 	public static void jump5() {
 		ChunkIndexTable.getInstance().Save();
+		System.out.println("##########################     Thank You!     ############################");
 		System.exit(0);	
 	}
 //********************************************
