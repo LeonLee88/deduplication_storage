@@ -17,7 +17,7 @@ import com.deduplication.FileProfile;
 public class DBLS {
 
 	public static void main(String[] args) {
-
+			ChunkIndexTable.getInstance();
 			InputStreamReader is=new InputStreamReader(System.in);
 			BufferedReader br=new BufferedReader(is);
 			try{
@@ -63,23 +63,24 @@ public class DBLS {
 	// List File
 		System.out.println("-------------------------------------------------");
 		System.out.println("               *FILE LIST*                       ");
+		
 		return;
 	}
 	
 	public static void jump2() {
 	// Upload File	
 		System.out.println("-------------------------------------------------");
-		System.out.println(" # UPLOAD: Please ENTER the directory of file");
-		System.out.print(" #   Directory >> ");
 		InputStreamReader is=new InputStreamReader(System.in);
         BufferedReader br=new BufferedReader(is);
         String filename;
         try{
-            filename=(String) br.readLine();
-            	uploadfile(filename);
-        		System.out.println(" # Upload File Success!");
-        		System.out.println();
-            	return;
+        		System.out.println(" # UPLOAD: Please ENTER the directory of file (q/Q to return to menu)");
+        		System.out.print(" #   Directory >> ");
+        		filename=(String) br.readLine();
+        			uploadfile(filename);
+        			System.out.println(" # Upload File Success!");
+        			System.out.println();
+        	return;   
         }catch(IOException e){
             System.out.println("System Error!");
             e.printStackTrace();
@@ -158,6 +159,7 @@ public class DBLS {
 	} // jump4 end
 	
 	public static void jump5() {
+		ChunkIndexTable.getInstance().Save();
 		System.exit(0);	
 	}
 //********************************************
