@@ -22,17 +22,17 @@ public class DBLS {
 			BufferedReader br=new BufferedReader(is);
 			try{
 				while(true){
-				System.out.println("##########################################################################");
-				System.out.println("                           DBLS Command Line UI                           ");
-				System.out.println("--------------------------------------------------------------------------");
-				System.out.println("                              *MAIN MENU*                                 ");
-				System.out.println("                                                                          ");		
-				System.out.println("                             1. LIST FILES                                ");
-				System.out.println("                             2. UPLOAD                                    ");
-				System.out.println("                             3. REMOVE                                    ");
-				System.out.println("                             4. DOWNLOAD                                  ");
-				System.out.println("                             5. QUIT                                      ");
-				System.out.println("--------------------------------------------------------------------------");
+				System.out.println("##############################################################################################");
+				System.out.println("########                           DBLS Command Line MENU                              #######");
+				System.out.println("##############################################################################################");
+				System.out.println("##                                                                                          ##");
+				System.out.println("##                                    1. LIST FILES                                         ##");
+				System.out.println("##                                    2. UPLOAD                                             ##");
+				System.out.println("##                                    3. REMOVE                                             ##");
+				System.out.println("##                                    4. DOWNLOAD                                           ##");
+				System.out.println("##                                    5. QUIT                                               ##");
+				System.out.println("##                                                                                          ##");			
+				System.out.println("##############################################################################################");
 				System.out.print(" Command # >> ");	
 				
             		switch ((String) br.readLine()) {
@@ -61,22 +61,33 @@ public class DBLS {
 	
 	public static void jump1() {
 	// List File
-		System.out.println("--------------------------------------------------------------------------");
-		System.out.println("                            *FILE LIST*                                   ");
+		System.out.println("----------------------------------------------------------------------------------------------");
+		System.out.println("                                        *FILE LIST*                                           ");
+		System.out.println("**********************************************************************************************");
+		System.out.printf(" # %s\t%-40s\t%-10s\t%s\n","No.","                    Name","Size","Time");
+		System.out.println("----------------------------------------------------------------------------------------------");
+		ArrayList<String> namelist = new ArrayList<String>(FileChunkMappings.getNameByFilename());
+		ArrayList<String> sizelist = new ArrayList<String>(FileChunkMappings.getSizeByFilename());
+		ArrayList<String> timelist = new ArrayList<String>(FileChunkMappings.getTimeByFilename());
 		
+		for(int i=0;i<namelist.size();i++){
+            System.out.printf(" # %s\t%-40s\t%-10s\t%s\n",i+1,namelist.get(i),sizelist.get(i),timelist.get(i));
+        }
+		System.out.println("-----------------------------------     Back to MENU     -------------------------------------");
+        System.out.println();
 		return;
 	}
 	
 	public static void jump2() {
 	// Upload File	
-		System.out.println("--------------------------------------------------------------------------");
+		System.out.println("----------------------------------------------------------------------------------------------");
 		InputStreamReader is=new InputStreamReader(System.in);
         BufferedReader br=new BufferedReader(is);
         String filename;
         try{
         	while(true){
-        		System.out.println(" # UPLOAD: Please ENTER the directory of file (ENTER q to return to menu)");
-        		System.out.print(" # Directory >> ");
+        		System.out.println(" # UPLOAD: Please ENTER the file path (ENTER q to return to menu)");
+        		System.out.print(" # File Path >> ");
         		filename=(String) br.readLine();
         		if(!filename.equals("q")){
         			uploadfile(filename);
@@ -104,7 +115,7 @@ public class DBLS {
 	
 	public static void jump3() {
 	// Remove File
-		System.out.println("--------------------------------------------------------------------------");
+		System.out.println("----------------------------------------------------------------------------------------------");
 
 		InputStreamReader is=new InputStreamReader(System.in);
         BufferedReader br=new BufferedReader(is);
@@ -140,7 +151,7 @@ public class DBLS {
 	
 	public static void jump4() {
 	// Download File
-		System.out.println("--------------------------------------------------------------------------");
+		System.out.println("----------------------------------------------------------------------------------------------");
 		InputStreamReader is=new InputStreamReader(System.in);
         BufferedReader br=new BufferedReader(is);
         String filename;
@@ -173,7 +184,7 @@ public class DBLS {
 	
 	public static void jump5() {
 		ChunkIndexTable.getInstance().Save();
-		System.out.println("##########################     Thank You!     ############################");
+		System.out.println("####################################     Thank You!     ######################################");
 		System.exit(0);	
 	}
 //********************************************

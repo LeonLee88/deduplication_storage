@@ -128,6 +128,60 @@ public class FileChunkMappings {
 		return null; // **********************
 	}
 	
+	public static ArrayList<String> getNameByFilename() {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(mapping_path));
+			NodeList nodeList = document.getElementsByTagName("file");
+			for (int i=0;i<nodeList.getLength();i++) {
+				list.add(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue());
+				}
+			return list;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static ArrayList<String> getSizeByFilename() {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(mapping_path));
+			NodeList nodeList = document.getElementsByTagName("file");
+			for (int i=0;i<nodeList.getLength();i++) {
+				list.add(nodeList.item(i).getAttributes().getNamedItem("size").getNodeValue());
+				}
+			return list;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static ArrayList<String> getTimeByFilename() {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(mapping_path));
+			NodeList nodeList = document.getElementsByTagName("file");
+			for (int i=0;i<nodeList.getLength();i++) {
+				list.add(nodeList.item(i).getAttributes().getNamedItem("time").getNodeValue());
+				}
+			return list;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+			
 	public static ArrayList<Chunk> getChunksByFile(String fileId) {
 		
 		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
